@@ -41,6 +41,18 @@ class HospitalServiceApplicationTests {
 	}
 
 	@Test
+	void givenStaffWrongUuidFetchPatientsUptoTwoYears() throws Exception {
+		// given -->prepare the setup
+		String wrongUuid = "205facf0-ad85-4bb0-a213-38c98f1da45";
+		// when --> action
+		ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/patients/" + wrongUuid));
+
+		// action --> verify the output
+		response.andExpect(MockMvcResultMatchers.status().isNotFound());
+
+	}
+
+	@Test
 	void registerNewStaff() throws Exception {
 		// given -->prepare the setup
 		StaffDto staff = new StaffDto();
