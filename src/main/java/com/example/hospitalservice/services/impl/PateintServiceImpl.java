@@ -6,16 +6,23 @@ import javax.transaction.Transactional;
 
 import com.example.hospitalservice.dto.DeletePatientsDto;
 import com.example.hospitalservice.entities.Patient;
+import com.example.hospitalservice.exception.InvalidInputException;
 import com.example.hospitalservice.exception.UserNotFoundException;
 import com.example.hospitalservice.repositories.PatientRepository;
 import com.example.hospitalservice.services.PatientService;
 import com.example.hospitalservice.utils.CsvHelper;
 
 import java.io.ByteArrayInputStream;
+import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+@Service
 public class PateintServiceImpl implements PatientService {
     @Autowired
     PatientRepository patientRepository;
@@ -38,6 +45,13 @@ public class PateintServiceImpl implements PatientService {
     @Transactional
     @Override
     public void deletePatients(DeletePatientsDto data) {
-        this.patientRepository.deletePatientsById(data.getIds(), data.getStart_date(), data.getEnd_date());
+        try {
+            Date startDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(data.getStart_date() + " 00:00:00");
+            Date endDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(data.getEnd_date() + " 00:00:00");
+            this.patientRepository.deletePatientsById(startDate, endDate);
+        } catch (ParseException e) {
+            System.out.println(e);
+            throw new InvalidInputException("Invalid date format. Valid format is yyyy-MM-dd HH:mm:ss");
+        }
     }
 }

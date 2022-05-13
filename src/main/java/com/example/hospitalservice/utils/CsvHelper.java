@@ -11,16 +11,22 @@ import com.example.hospitalservice.entities.Patient;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.QuoteMode;
 
 public class CsvHelper {
+    public enum Header {
+        Name, Age, Created_at, Updated_at
+    }
+
     public static ByteArrayInputStream dataToCSV(Patient patient) {
-        final CSVFormat format = CSVFormat.DEFAULT.withQuoteMode(QuoteMode.MINIMAL);
+        final CSVFormat format = CSVFormat.DEFAULT.withHeader(Header.class);
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();
                 CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out), format);) {
             List<Object> data = Arrays.asList(
-                    String.valueOf(patient.getId()), patient.getName(), patient.getAge(), patient.getCreated_at(),
-                    patient.getUpdated_at());
+                    patient.getName(),
+                    String.valueOf(patient.getAge()),
+                    String.valueOf(patient.getCreated_at()),
+                    String.valueOf(patient.getUpdated_at()));
+
             csvPrinter.printRecord(data);
             csvPrinter.flush();
             return new ByteArrayInputStream(out.toByteArray());

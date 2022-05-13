@@ -17,9 +17,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -32,7 +32,7 @@ public class PatientController {
     protected PatientService patientService;
 
     @GetMapping("/{staff_uuid}")
-    public ResponseEntity<Set<Patient>> fetchAllPatients(@RequestParam String staff_uuid) {
+    public ResponseEntity<Set<Patient>> fetchAllPatients(@PathVariable String staff_uuid) {
         if (!this.staffService.validateStaffUUID(staff_uuid)) {
             throw new InvalidStaffUUIDException("Invalid staff uuid");
         }
@@ -44,7 +44,7 @@ public class PatientController {
     }
 
     @PatchMapping("/{staff_uuid}")
-    public ResponseEntity<String> deletePatient(@RequestParam String staff_uuid,
+    public ResponseEntity<String> deletePatient(@PathVariable String staff_uuid,
             @RequestBody DeletePatientsDto patients) {
         if (!this.staffService.validateStaffUUID(staff_uuid)) {
             throw new InvalidStaffUUIDException("Invalid staff uuid");
@@ -55,13 +55,13 @@ public class PatientController {
     }
 
     @GetMapping("/csv/download/{staff_uuid}/{patient_id}")
-    public ResponseEntity<Resource> getFile(@RequestParam String staff_uuid,
-            @RequestParam int patient_id) {
+    public ResponseEntity<Resource> getFile(@PathVariable String staff_uuid,
+            @PathVariable int patient_id) {
         if (!this.staffService.validateStaffUUID(staff_uuid)) {
             throw new InvalidStaffUUIDException("Invalid staff uuid");
         }
 
-        String filename = "tutorials.csv";
+        String filename = "patient.csv";
         InputStreamResource file = new InputStreamResource(this.patientService.fetchPatientByIdToCsv(patient_id));
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)

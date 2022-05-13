@@ -1,13 +1,13 @@
 package com.example.hospitalservice.dto;
 
-import java.util.Date;
-import java.util.Set;
+import javax.validation.constraints.NotEmpty;
 
 import lombok.Data;
 
 @Data
 public class DeletePatientsDto {
-    Set<Integer> ids;
-    Date start_date;
-    Date end_date;
+    @NotEmpty
+    String start_date;
+    @NotEmpty
+    String end_date;
 }
