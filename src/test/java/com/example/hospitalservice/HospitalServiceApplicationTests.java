@@ -1,13 +1,55 @@
 package com.example.hospitalservice;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import com.example.hospitalservice.dto.StaffDto;
+import com.example.hospitalservice.entities.Staff;
+import com.example.hospitalservice.services.StaffService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
+@AutoConfigureMockMvc
 class HospitalServiceApplicationTests {
 
+	@Autowired
+	StaffService staffService;
+
+	@Autowired
+	MockMvc mockMvc;
+
 	@Test
-	void contextLoads() {
+	void givenStaffUuidFetchPatientsUptoTwoYears() throws Exception {
+		// given -->prepare the setup
+		StaffDto staff = new StaffDto();
+		staff.setName("Alex");
+		Staff savedStaff = staffService.createStaff(staff);
+		String staffUuid = savedStaff.getUuid();
+		// when --> action
+		ResultActions response = mockMvc.perform(MockMvcRequestBuilders.get("/patients/" + staffUuid));
+
+		// action --> verify the output
+		response.andExpect(MockMvcResultMatchers.status().isOk());
+
+	}
+
+	@Test
+	void registerNewStaff() throws Exception {
+		// given -->prepare the setup
+		StaffDto staff = new StaffDto();
+		staff.setName("Prince");
+		Staff savedStaff = staffService.createStaff(staff);
+
+		assertEquals("Prince", savedStaff.getName());
 	}
 
 }
